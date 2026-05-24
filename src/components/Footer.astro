@@ -1,0 +1,28 @@
+---
+import siteConfig from '../data/site-config';
+
+const socialLinks = siteConfig.socialLinks ?? [];
+const currentYear = new Date().getFullYear();
+---
+
+<footer class="mx-auto w-full max-w-3xl border-t border-main py-8 mt-24">
+    <div class="flex items-center justify-between">
+        <p class="font-mono text-xs text-muted">
+            &copy; {currentYear} {siteConfig.title}
+        </p>
+        {socialLinks.length > 0 && (
+            <div class="flex gap-6">
+                {socialLinks.map((link) => (
+                    <a
+                        href={link.href}
+                        class="font-mono text-xs tracking-widest uppercase hover:text-accent transition-colors"
+                        target={link.href.startsWith('mailto') ? undefined : '_blank'}
+                        rel={link.href.startsWith('mailto') ? undefined : 'noopener noreferrer'}
+                    >
+                        {link.text}
+                    </a>
+                ))}
+            </div>
+        )}
+    </div>
+</footer>

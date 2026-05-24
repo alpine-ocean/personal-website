@@ -1,0 +1,37 @@
+---
+import BaseLayout from '../layouts/BaseLayout.astro';
+---
+
+<BaseLayout title="Contact — Corey Juarez" description="Get in touch.">
+    <div class="max-w-xl">
+        <h1 class="font-serif text-2xl font-medium mb-12 border-b border-main pb-4">Contact</h1>
+
+        <p class="font-serif text-lg leading-relaxed mb-12">
+            If you want to talk about engineering, boats, writing, or something worth building —
+            email is the best way to reach me.
+        </p>
+
+        <div class="flex flex-col gap-4">
+            <a
+                href="mailto:coreyjuarez@gmail.com"
+                class="group flex items-baseline justify-between border-b border-main py-4"
+            >
+                <span class="font-mono text-xs tracking-widest uppercase text-muted">Email</span>
+                <span class="font-serif text-base group-hover:text-accent transition-colors">
+                    coreyjuarez@gmail.com
+                </span>
+            </a>
+            <a
+                href="https://github.com/alpine-ocean"
+                target="_blank"
+                rel="noopener noreferrer"
+                class="group flex items-baseline justify-between border-b border-main py-4"
+            >
+                <span class="font-mono text-xs tracking-widest uppercase text-muted">GitHub</span>
+                <span class="font-serif text-base group-hover:text-accent transition-colors">
+                    github.com/alpine-ocean
+                </span>
+            </a>
+        </div>
+    </div>
+</BaseLayout>

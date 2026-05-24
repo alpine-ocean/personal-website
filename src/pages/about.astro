@@ -1,0 +1,52 @@
+---
+import BaseLayout from '../layouts/BaseLayout.astro';
+
+const facts = [
+    { label: 'Based in', value: 'Boston, MA' },
+    { label: 'Vessel', value: 'TBD' },
+    { label: 'Currently reading', value: 'The Soul of a New Machine' },
+];
+---
+
+<BaseLayout title="About — Corey Juarez" description="Mechanical engineer, sailor, writer.">
+    <div class="max-w-xl">
+        <h1 class="font-serif text-2xl font-medium mb-12 border-b border-main pb-4">About</h1>
+
+        <div class="about-prose mb-16">
+            <p>
+                I'm a mechanical engineer working in hard tech — the kind of work that involves real
+                materials, real forces, and things that can actually break. I care about making things
+                that are well-considered and built to last.
+            </p>
+            <p>
+                Outside the workshop I'm usually on the water. Sailing has taught me more about
+                patience, judgment, and reading a situation than anything else I've done. I've also
+                been writing for most of my life — essays, notes, the occasional story. It's how I
+                think.
+            </p>
+            <p>
+                This site is where those three things share a space.
+            </p>
+        </div>
+
+        <div class="border-t border-main pt-8 flex flex-col gap-8 sm:flex-row">
+            {facts.map((fact) => (
+                <div class="flex-1">
+                    <p class="font-mono text-xs tracking-widest uppercase text-muted mb-2">{fact.label}</p>
+                    <p class="font-serif text-base">{fact.value}</p>
+                </div>
+            ))}
+        </div>
+    </div>
+</BaseLayout>
+
+<style>
+    .about-prose p {
+        font-family: var(--font-serif);
+        font-size: 1.125rem;
+        line-height: 1.75;
+    }
+    .about-prose p + p {
+        margin-top: 1.5rem;
+    }
+</style>

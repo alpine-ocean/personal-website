@@ -1,0 +1,72 @@
+---
+import { getCollection } from 'astro:content';
+import ActivityCalendar from '../components/ActivityCalendar.astro';
+import BaseLayout from '../layouts/BaseLayout.astro';
+import { sortItemsByDateDesc } from '../utils/data-utils';
+
+const posts = await getCollection('blog');
+const projects = await getCollection('projects');
+
+const feed = [
+    ...posts.map((p) => ({
+        title: p.data.title,
+        href: `/blog/${p.id}/`,
+        date: p.data.publishDate,
+        type: 'Blog' as const,
+        excerpt: p.data.excerpt,
+    })),
+    ...projects.map((p) => ({
+        title: p.data.title,
+        href: `/projects/`,
+        date: p.data.publishDate,
+        type: 'Project' as const,
+        excerpt: p.data.description,
+    })),
+].sort((a, b) => b.date.getTime() - a.date.getTime()).slice(0, 8);
+
+function shortDate(date: Date) {
+    return date.toLocaleDateString('en-us', { month: 'short', year: 'numeric' });
+}
+---
+
+<BaseLayout title="Corey Juarez" description="Mechanical engineer, sailor, writer.">
+    <div class="max-w-2xl">
+
+        <!-- Hero -->
+        <section class="mb-20 border-b border-main pb-16">
+            <h1 class="font-serif text-4xl font-medium leading-tight mb-8 sm:text-5xl">
+                Engineer. Sailor. Writer.
+            </h1>
+            <p class="font-serif text-lg leading-relaxed max-w-xl">
+                I'm a mechanical engineer working in hard tech — the kind of problems that require
+                getting your hands dirty. Off hours I'm usually on the water or at a desk trying to
+                put something into words. This site is where those threads come together.
+            </p>
+        </section>
+
+        <!-- Recent feed -->
+        <section>
+            <p class="font-mono text-xs tracking-widest uppercase text-muted mb-8">Recent</p>
+            <ul class="divide-y divide-main">
+                {feed.map((item) => (
+                    <li>
+                        <a href={item.href} class="group block py-5">
+                            <div class="flex items-baseline justify-between gap-8">
+                                <h2 class="font-serif text-base font-medium group-hover:text-accent transition-colors">
+                                    {item.title}
+                                </h2>
+                                <span class="font-mono text-xs text-muted shrink-0">
+                                    {shortDate(item.date)}
+                                </span>
+                            </div>
+                            <p class="font-mono text-xs text-muted mt-1">{item.type}</p>
+                        </a>
+                    </li>
+                ))}
+            </ul>
+        </section>
+
+        <ActivityCalendar />
+
+    </div>
+</BaseLayout>

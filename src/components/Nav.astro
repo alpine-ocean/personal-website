@@ -1,0 +1,66 @@
+---
+import siteConfig from '../data/site-config';
+
+const navLinks = siteConfig.headerNavLinks ?? [];
+const currentPath = Astro.url.pathname;
+---
+
+<nav class="mx-auto w-full max-w-3xl border-b border-main" aria-label="Primary navigation">
+    <div class="flex items-baseline justify-between py-6">
+        <a href="/" class="font-serif text-lg font-medium tracking-tight">
+            {siteConfig.title}
+        </a>
+
+        {navLinks.length > 0 && (
+            <>
+                <button
+                    class="menu-toggle flex flex-col gap-1.5 md:hidden"
+                    aria-label="Open menu"
+                    aria-expanded="false"
+                    aria-controls="nav-links"
+                >
+                    <span class="block h-px w-5 bg-current" />
+                    <span class="block h-px w-5 bg-current" />
+                </button>
+
+                <ul
+                    id="nav-links"
+                    class="menu hidden flex-col gap-4 py-6 md:flex md:flex-row md:gap-8 md:py-0"
+                >
+                    {navLinks.map((link) => {
+                        const isActive = currentPath === link.href || (link.href !== '/' && currentPath.startsWith(link.href));
+                        return (
+                            <li>
+                                <a
+                                    href={link.href}
+                                    class:list={[
+                                        'font-mono text-xs tracking-widest uppercase transition-colors',
+                                        isActive ? 'text-accent' : 'hover:text-accent'
+                                    ]}
+                                >
+                                    {link.text}
+                                </a>
+                            </li>
+                        );
+                    })}
+                </ul>
+            </>
+        )}
+    </div>
+</nav>
+
+<script>
+    function initMenu() {
+        const btn = document.querySelector('.menu-toggle');
+        const menu = document.getElementById('nav-links');
+        if (!btn || !menu) return;
+        btn.addEventListener('click', () => {
+            const open = btn.getAttribute('aria-expanded') === 'true';
+            btn.setAttribute('aria-expanded', open ? 'false' : 'true');
+            menu.classList.toggle('hidden', open);
+            menu.classList.toggle('flex', !open);
+        });
+    }
+    initMenu();
+    document.addEventListener('astro:after-swap', initMenu);
+</script>

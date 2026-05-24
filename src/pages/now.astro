@@ -1,0 +1,54 @@
+---
+import BaseLayout from '../layouts/BaseLayout.astro';
+
+const lastUpdated = '2026-05-23';
+---
+
+<BaseLayout title="Now — Corey Juarez" description="What I'm up to right now.">
+    <div class="max-w-xl">
+        <div class="mb-12 flex items-baseline justify-between border-b border-main pb-4">
+            <h1 class="font-serif text-2xl font-medium">Now</h1>
+            <p class="font-mono text-xs text-muted">Updated {lastUpdated}</p>
+        </div>
+
+        <div class="space-y-10 font-serif text-lg leading-relaxed">
+            <section>
+                <h2 class="font-mono text-xs tracking-widest uppercase text-muted mb-4">Work</h2>
+                <p>
+                    Heads-down on a propulsion project at work — real hardware, real deadlines. The kind of
+                    thing where the simulation is never quite right and you end up learning more from the
+                    failure than the success.
+                </p>
+            </section>
+
+            <section>
+                <h2 class="font-mono text-xs tracking-widest uppercase text-muted mb-4">The Boat</h2>
+                <p>
+                    Deep into the sailboat refit. Currently working through the electrical system — which
+                    means spending a lot of time in the bilge with a headlamp and a multimeter. Progress is
+                    slow but the end is starting to look real.
+                </p>
+            </section>
+
+            <section>
+                <h2 class="font-mono text-xs tracking-widest uppercase text-muted mb-4">Reading</h2>
+                <p>
+                    <em>The Soul of a New Machine</em> by Tracy Kidder. Should have read it years ago.
+                </p>
+            </section>
+
+            <section>
+                <h2 class="font-mono text-xs tracking-widest uppercase text-muted mb-4">Writing</h2>
+                <p>
+                    Working on a piece about what the van build taught me about constraints — how a tight
+                    budget and 80 square feet forced better decisions than an open checkbook would have.
+                </p>
+            </section>
+        </div>
+
+        <p class="mt-16 font-mono text-xs text-muted">
+            This is a <a href="https://nownownow.com/about" class="underline decoration-dashed underline-offset-2 hover:text-accent hover:decoration-solid transition-colors">/now page</a>.
+            Everyone should have one.
+        </p>
+    </div>
+</BaseLayout>

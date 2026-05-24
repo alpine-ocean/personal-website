@@ -1,0 +1,97 @@
+---
+import BaseLayout from '../../layouts/BaseLayout.astro';
+
+const projects = [
+    {
+        title: 'Sailboat Refit',
+        years: '2025–26',
+        type: 'Personal',
+        status: 'Ongoing',
+        description: 'Full refit of a cruising sailboat — hull work, standing and running rigging, complete electrical rebuild, and interior. The kind of project where every system touches every other system.',
+        chapters: ['Before', 'Process', 'After'],
+    },
+    {
+        title: 'Van Build',
+        years: '2023–24',
+        type: 'Personal',
+        status: null,
+        description: 'Restoration and conversion of a cargo van into a livable space — insulation, 12V electrical system, custom cabinetry, ventilation. Learned more about constraints from 80 square feet than from any engineering project.',
+        chapters: ['Before', 'Build', 'Finished'],
+    },
+    {
+        title: 'Boston Flugtag',
+        years: '2022',
+        type: 'Work',
+        status: null,
+        description: `Mentored a group of 15–20 summer interns through the full engineering cycle for Red Bull Flugtag Boston. Took them from concept sketches to a flying machine (briefly) in front of a crowd. The project was about the process and the people as much as the machine — watching a team figure out how to think together, under a deadline, with a budget, and with something real at the end of it.`,
+        chapters: ['Design Day', 'Build Week', 'Event Day'],
+    },
+];
+---
+
+<BaseLayout title="Projects — Corey Juarez" description="Builds, refits, and engineering work — personal and professional.">
+    <div class="max-w-2xl">
+        <div class="mb-16 border-b border-main pb-4">
+            <h1 class="font-serif text-2xl font-medium">Projects</h1>
+            <p class="font-mono text-xs text-muted mt-2">Builds, refits, and engineering work — personal and professional.</p>
+        </div>
+
+        <div class="space-y-0">
+            {projects.map((project, i) => (
+                <article class:list={['pb-16', i < projects.length - 1 && 'mb-16 border-b border-main']}>
+                    <header class="flex items-baseline justify-between gap-8 mb-6">
+                        <div>
+                            <h2 class="font-serif text-xl font-medium">
+                                {project.title}
+                                {project.status && (
+                                    <span class="font-mono text-xs text-accent ml-3 tracking-widest uppercase">
+                                        {project.status}
+                                    </span>
+                                )}
+                            </h2>
+                        </div>
+                        <div class="text-right shrink-0">
+                            <span class="font-mono text-xs text-muted">{project.years}</span>
+                            <span class="font-mono text-xs text-muted mx-2">·</span>
+                            <span class="font-mono text-xs text-muted">{project.type}</span>
+                        </div>
+                    </header>
+
+                    <p class="font-serif text-base leading-relaxed mb-10 max-w-xl">
+                        {project.description}
+                    </p>
+
+                    <div class="space-y-8">
+                        {project.chapters.map((chapter) => (
+                            <div>
+                                <p class="font-mono text-xs tracking-widest uppercase text-muted mb-3">{chapter}</p>
+                                <div class="photo-grid">
+                                    {[1, 2, 3].map(() => (
+                                        <div class="photo-placeholder">
+                                            <span class="font-mono text-xs text-muted">photo</span>
+                                        </div>
+                                    ))}
+                                </div>
+                            </div>
+                        ))}
+                    </div>
+                </article>
+            ))}
+        </div>
+    </div>
+</BaseLayout>
+
+<style>
+    .photo-grid {
+        display: grid;
+        grid-template-columns: repeat(3, 1fr);
+        gap: 0.5rem;
+    }
+    .photo-placeholder {
+        aspect-ratio: 4 / 3;
+        background-color: var(--bg-muted);
+        display: flex;
+        align-items: center;
+        justify-content: center;
+    }
+</style>

@@ -1,0 +1,42 @@
+---
+import { getCollection } from 'astro:content';
+import BaseLayout from '../../layouts/BaseLayout.astro';
+import { sortItemsByDateDesc } from '../../utils/data-utils';
+
+const posts = (await getCollection('blog')).sort(sortItemsByDateDesc);
+
+function shortDate(date: Date) {
+    return date.toLocaleDateString('en-us', { month: 'short', year: 'numeric' });
+}
+---
+
+<BaseLayout title="Blog — Corey Juarez" description="Sailing, writing, and the occasional engineering tangent.">
+    <div class="max-w-2xl">
+        <div class="mb-12 border-b border-main pb-4">
+            <h1 class="font-serif text-2xl font-medium">Blog</h1>
+            <p class="font-mono text-xs text-muted mt-2">Sailing, writing, and the occasional engineering tangent.</p>
+        </div>
+
+        <ul class="divide-y divide-main">
+            {posts.map((post) => (
+                <li>
+                    <a href={`/blog/${post.id}/`} class="group block py-6">
+                        <div class="flex items-baseline justify-between gap-8">
+                            <h2 class="font-serif text-lg font-medium group-hover:text-accent transition-colors">
+                                {post.data.title}
+                            </h2>
+                            <span class="font-mono text-xs text-muted shrink-0">
+                                {shortDate(post.data.publishDate)}
+                            </span>
+                        </div>
+                        {post.data.excerpt && (
+                            <p class="mt-1 font-serif text-sm text-muted leading-relaxed">
+                                {post.data.excerpt}
+                            </p>
+                        )}
+                    </a>
+                </li>
+            ))}
+        </ul>
+    </div>
+</BaseLayout>

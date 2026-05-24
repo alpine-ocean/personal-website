@@ -1,0 +1,114 @@
+---
+import { getCollection } from 'astro:content';
+
+const posts = await getCollection('blog');
+
+// Build a map of ISO date string -> post count
+const countByDay: Record<string, number> = {};
+for (const post of posts) {
+    const key = post.data.publishDate.toISOString().slice(0, 10);
+    countByDay[key] = (countByDay[key] ?? 0) + 1;
+}
+
+// Build 52 weeks × 7 days grid, ending today
+const today = new Date();
+today.setHours(0, 0, 0, 0);
+
+// Start from the Sunday 52 weeks ago
+const start = new Date(today);
+start.setDate(start.getDate() - 364);
+// Rewind to the nearest Sunday
+start.setDate(start.getDate() - start.getDay());
+
+const weeks: { date: Date; count: number }[][] = [];
+let current = new Date(start);
+
+while (current <= today) {
+    const week: { date: Date; count: number }[] = [];
+    for (let d = 0; d < 7; d++) {
+        const key = current.toISOString().slice(0, 10);
+        week.push({ date: new Date(current), count: countByDay[key] ?? 0 });
+        current.setDate(current.getDate() + 1);
+    }
+    weeks.push(week);
+}
+
+const maxCount = Math.max(1, ...Object.values(countByDay));
+
+function intensity(count: number): string {
+    if (count === 0) return 'none';
+    const ratio = count / maxCount;
+    if (ratio < 0.33) return 'low';
+    if (ratio < 0.66) return 'mid';
+    return 'high';
+}
+
+// Month labels: find the first week where month changes
+const monthLabels: { label: string; col: number }[] = [];
+let lastMonth = -1;
+weeks.forEach((week, i) => {
+    const month = week[0].date.getMonth();
+    if (month !== lastMonth) {
+        monthLabels.push({
+            label: week[0].date.toLocaleDateString('en-us', { month: 'short' }),
+            col: i + 1,
+        });
+        lastMonth = month;
+    }
+});
+---
+
+<div class="calendar-wrap">
+    <p class="font-mono text-xs tracking-widest uppercase text-muted mb-4">Writing activity</p>
+    <div class="calendar-grid" style={`grid-template-columns: repeat(${weeks.length}, 1fr)`}>
+        {weeks.map((week) =>
+            week.map((day) => (
+                <div
+                    class:list={['calendar-cell', `intensity-${intensity(day.count)}`]}
+                    title={`${day.date.toISOString().slice(0, 10)}${day.count > 0 ? ` · ${day.count} post${day.count > 1 ? 's' : ''}` : ''}`}
+                />
+            ))
+        )}
+    </div>
+    <div class="calendar-months" style={`grid-template-columns: repeat(${weeks.length}, 1fr)`}>
+        {monthLabels.map(({ label, col }) => (
+            <span class="calendar-month-label" style={`grid-column: ${col}`}>{label}</span>
+        ))}
+    </div>
+</div>
+
+<style>
+    .calendar-wrap {
+        margin-top: 4rem;
+        padding-top: 2rem;
+        border-top: 1px solid var(--border-main);
+    }
+    .calendar-grid {
+        display: grid;
+        grid-auto-flow: column;
+        grid-template-rows: repeat(7, 1fr);
+        gap: 3px;
+        width: 100%;
+    }
+    .calendar-cell {
+        aspect-ratio: 1;
+        border-radius: 1px;
+    }
+    .intensity-none { background-color: var(--bg-muted); }
+    .intensity-low  { background-color: #d4896a; }
+    .intensity-mid  { background-color: #c2703e; }
+    .intensity-high { background-color: var(--accent); }
+
+    .calendar-months {
+        display: grid;
+        grid-auto-flow: column;
+        margin-top: 4px;
+        width: 100%;
+    }
+    .calendar-month-label {
+        font-family: var(--font-mono);
+        font-size: 0.6rem;
+        color: var(--text-muted);
+        grid-row: 1;
+    }
+</style>

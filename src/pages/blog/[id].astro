@@ -86,42 +86,42 @@ function shortDate(date: Date) {
         line-height: 1.8;
         color: var(--text-main);
     }
-    .post-body p + p {
+    .post-body :global(p + p) {
         margin-top: 1.5rem;
     }
-    .post-body h2 {
+    .post-body :global(h2) {
         font-family: var(--font-serif);
         font-size: 1.25rem;
         font-weight: 500;
         margin-top: 2.5rem;
         margin-bottom: 0.75rem;
     }
-    .post-body h3 {
+    .post-body :global(h3) {
         font-family: var(--font-serif);
         font-size: 1.1rem;
         font-weight: 500;
         margin-top: 2rem;
         margin-bottom: 0.5rem;
     }
-    .post-body a {
+    .post-body :global(a) {
         text-decoration: underline;
         text-decoration-style: dashed;
         text-underline-offset: 3px;
         text-decoration-thickness: 1px;
     }
-    .post-body a:hover {
+    .post-body :global(a:hover) {
         color: var(--accent);
         text-decoration-style: solid;
     }
-    .post-body ul,
-    .post-body ol {
+    .post-body :global(ul),
+    .post-body :global(ol) {
         padding-left: 1.25rem;
         margin: 1.25rem 0;
     }
-    .post-body li + li {
+    .post-body :global(li + li) {
         margin-top: 0.4rem;
     }
-    .post-body blockquote {
+    .post-body :global(blockquote) {
         font-style: italic;
         font-size: 1.2em;
         line-height: 1.6;
@@ -129,22 +129,22 @@ function shortDate(date: Date) {
         padding-left: 1.25rem;
         border-left: 2px solid var(--border-main);
     }
-    .post-body strong {
+    .post-body :global(strong) {
         font-weight: 600;
     }
-    .post-body code {
+    .post-body :global(code) {
         font-family: var(--font-mono);
         font-size: 0.875em;
         background: var(--bg-muted);
         padding: 0.1em 0.3em;
         border-radius: 2px;
     }
-    .post-body hr {
+    .post-body :global(hr) {
         border: none;
         border-top: 1px solid var(--border-main);
         margin: 2.5rem 0;
     }
-    .post-body img {
+    .post-body :global(img) {
         width: 100%;
         margin: 2rem 0;
     }

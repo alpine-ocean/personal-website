@@ -1,12 +1,7 @@
 ---
 import { type CollectionEntry, getCollection, render } from 'astro:content';
 import BaseLayout from '../../layouts/BaseLayout.astro';
-import Button from '../../components/Button.astro';
-import FormattedDate from '../../components/FormattedDate.astro';
-import PostPreview from '../../components/PostPreview.astro';
-import Subscribe from '../../components/Subscribe.astro';
 import { sortItemsByDateDesc } from '../../utils/data-utils';
-import { slugify } from '../../utils/common-utils';
 
 export async function getStaticPaths() {
     const posts = (await getCollection('blog')).sort(sortItemsByDateDesc);
@@ -21,80 +16,136 @@ export async function getStaticPaths() {
     }));
 }
 
-type Props = { post: CollectionEntry<'blog'>; prevPost: CollectionEntry<'blog'>; nextPost: CollectionEntry<'blog'> };
+type Props = {
+    post: CollectionEntry<'blog'>;
+    prevPost: CollectionEntry<'blog'> | null;
+    nextPost: CollectionEntry<'blog'> | null;
+};
 
-const { href } = Astro.url;
 const { post, prevPost, nextPost } = Astro.props;
-const { title, publishDate, updatedDate, excerpt, tags = [], seo } = post.data;
+const { title, publishDate, updatedDate, excerpt, seo } = post.data;
 const { Content } = await render(post);
+
+function shortDate(date: Date) {
+    return date.toLocaleDateString('en-us', { month: 'long', day: 'numeric', year: 'numeric' });
+}
 ---
 
-<BaseLayout title={seo?.title ?? title} description={seo?.description ?? excerpt} image={seo?.image} pageType="article">
-    <article class="mb-16 sm:mb-24">
-        <header class="mb-8">
-            <h1 class="font-serif text-3xl leading-tight font-medium sm:text-5xl sm:leading-tight">{title}</h1>
-            <div class="mt-4 text-sm">
-                <FormattedDate date={publishDate} />
-                {
-                    updatedDate && (
-                        <>
-                            {' '}
-                            <span>
-                                (Updated on <FormattedDate date={updatedDate} />)
-                            </span>
-                        </>
-                    )
-                }
-            </div>
+<BaseLayout title={seo?.title ?? title} description={seo?.description ?? excerpt} pageType="article">
+    <div class="max-w-xl">
+
+        <header class="mb-12 border-b border-main pb-6">
+            <h1 class="font-serif text-2xl font-medium leading-snug mb-4 sm:text-3xl">
+                {title}
+            </h1>
+            <p class="font-mono text-xs text-muted">
+                {shortDate(publishDate)}
+                {updatedDate && <span> · Updated {shortDate(updatedDate)}</span>}
+            </p>
         </header>
-        <div class="prose sm:prose-lg max-w-none">
+
+        <div class="post-body">
             <Content />
         </div>
-        <div class="mt-8 flex flex-wrap items-center justify-between gap-6 text-sm sm:mt-12 sm:text-base">
-            {
-                tags.length > 0 && (
-                    <div class="flex flex-wrap gap-x-5 gap-y-1 text-sm">
-                        {tags.map((tag) => (
-                            <a class="text-main hover:underline" href={`/tags/${slugify(tag)}`}>
-                                #{tag}
-                            </a>
-                        ))}
-                    </div>
-                )
-            }
-            <Button class="copy-url-button" aria-label="Copy link" data-url={href} data-tooltip-default="Copy link" data-tooltip-success="Copied">Share</Button>
-        </div>
-    </article>
-    {
-        (prevPost || nextPost) && (
-            <div class="my-16 sm:my-24">
-                <h2 class="mb-12 font-serif text-xl italic sm:mb-16 sm:text-2xl">Read Next</h2>
-                {nextPost && <PostPreview post={nextPost} class="mb-10 sm:mb-12" headingLevel="h3" />}
-                {prevPost && <PostPreview post={prevPost} class="mb-10 sm:mb-12" headingLevel="h3" />}
-            </div>
-        )
-    }
-    <Subscribe class="my-16 sm:my-24" />
+
+        {(prevPost || nextPost) && (
+            <nav class="mt-16 pt-8 border-t border-main" aria-label="Post navigation">
+                <p class="font-mono text-xs tracking-widest uppercase text-muted mb-6">More</p>
+                <div class="flex flex-col gap-4">
+                    {nextPost && (
+                        <a href={`/blog/${nextPost.id}/`} class="group flex items-baseline justify-between gap-8">
+                            <span class="font-serif text-base group-hover:text-accent transition-colors">
+                                {nextPost.data.title}
+                            </span>
+                            <span class="font-mono text-xs text-muted shrink-0">
+                                {shortDate(nextPost.data.publishDate)}
+                            </span>
+                        </a>
+                    )}
+                    {prevPost && (
+                        <a href={`/blog/${prevPost.id}/`} class="group flex items-baseline justify-between gap-8">
+                            <span class="font-serif text-base group-hover:text-accent transition-colors">
+                                {prevPost.data.title}
+                            </span>
+                            <span class="font-mono text-xs text-muted shrink-0">
+                                {shortDate(prevPost.data.publishDate)}
+                            </span>
+                        </a>
+                    )}
+                </div>
+            </nav>
+        )}
+
+    </div>
 </BaseLayout>
 
-<script>
-    document.addEventListener('astro:page-load', () => {
-        const copyUrlButton = document.querySelector('.copy-url-button') as HTMLButtonElement;
-        copyUrlButton?.addEventListener('click', async () => {
-            await copyUrl(copyUrlButton);
-        });
-
-        async function copyUrl(button: HTMLButtonElement) {
-            let url = button.getAttribute('data-url') || '';
-            let label = button.innerText;
-
-            await navigator.clipboard.writeText(url);
-
-            button.innerText = 'Copied';
-
-            setTimeout(() => {
-                button.innerText = label;
-            }, 2500);
-        }
-    });
-</script>
+<style>
+    .post-body {
+        font-family: var(--font-serif);
+        font-size: 1.0625rem;
+        line-height: 1.8;
+        color: var(--text-main);
+    }
+    .post-body p + p {
+        margin-top: 1.5rem;
+    }
+    .post-body h2 {
+        font-family: var(--font-serif);
+        font-size: 1.25rem;
+        font-weight: 500;
+        margin-top: 2.5rem;
+        margin-bottom: 0.75rem;
+    }
+    .post-body h3 {
+        font-family: var(--font-serif);
+        font-size: 1.1rem;
+        font-weight: 500;
+        margin-top: 2rem;
+        margin-bottom: 0.5rem;
+    }
+    .post-body a {
+        text-decoration: underline;
+        text-decoration-style: dashed;
+        text-underline-offset: 3px;
+        text-decoration-thickness: 1px;
+    }
+    .post-body a:hover {
+        color: var(--accent);
+        text-decoration-style: solid;
+    }
+    .post-body ul,
+    .post-body ol {
+        padding-left: 1.25rem;
+        margin: 1.25rem 0;
+    }
+    .post-body li + li {
+        margin-top: 0.4rem;
+    }
+    .post-body blockquote {
+        font-style: italic;
+        font-size: 1.2em;
+        line-height: 1.6;
+        margin: 2rem 0;
+        padding-left: 1.25rem;
+        border-left: 2px solid var(--border-main);
+    }
+    .post-body strong {
+        font-weight: 600;
+    }
+    .post-body code {
+        font-family: var(--font-mono);
+        font-size: 0.875em;
+        background: var(--bg-muted);
+        padding: 0.1em 0.3em;
+        border-radius: 2px;
+    }
+    .post-body hr {
+        border: none;
+        border-top: 1px solid var(--border-main);
+        margin: 2.5rem 0;
+    }
+    .post-body img {
+        width: 100%;
+        margin: 2rem 0;
+    }
+</style>
